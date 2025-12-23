@@ -1,0 +1,29 @@
+# IDE và Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Hệ điều hành
+.DS_Store
+Thumbs.db
+
+# PHP
+vendor/
+composer.lock
+
+# Environment files
+.env
+config/Database.php
+
+# Log files
+*.log
+
+# Temporary files
+*.tmp
+*.bak
+*.backup
+
+# File cá nhân
+promp.txt
