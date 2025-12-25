@@ -2,6 +2,15 @@
 
 Ứng dụng web quản lý thông tin sinh viên được xây dựng bằng **PHP thuần với mô hình MVC và OOP**, sử dụng **Single Entry Point Router**.
 
+## 🌐 Demo
+
+**Live Demo:** [https://studentmanager.alexstudio.id.vn/](https://studentmanager.alexstudio.id.vn/)
+
+**Tài khoản demo:**
+
+- Admin: `admin` / `admin`
+- User: Đăng ký tài khoản mới
+
 ## 🎯 Tính năng chính
 
 ### Xác thực và phân quyền
