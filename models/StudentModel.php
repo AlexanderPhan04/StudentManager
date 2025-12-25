@@ -125,4 +125,16 @@ class StudentModel extends Model
         $stmt->execute([$studentCode]);
         return $stmt->fetch();
     }
+
+    /**
+     * Tìm sinh viên theo user_id
+     * @param int $userId
+     * @return array|false
+     */
+    public function findByUserId($userId)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE user_id = ?");
+        $stmt->execute([$userId]);
+        return $stmt->fetch();
+    }
 }

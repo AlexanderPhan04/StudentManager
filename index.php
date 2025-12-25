@@ -34,6 +34,11 @@ switch ($action) {
         $controller->logout();
         break;
 
+    case 'complete_profile':
+        $controller = new AuthController();
+        $controller->completeProfile();
+        break;
+
     // Student routes
     case 'home':
     case 'students':
