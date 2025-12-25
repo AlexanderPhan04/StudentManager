@@ -70,11 +70,16 @@ class AuthController
                 $error = "Vui lòng nhập đầy đủ thông tin";
             } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $error = "Email không hợp lệ";
+            } elseif (!str_ends_with($email, '@vtc.edu.vn')) {
+                $error = "Chỉ chấp nhận email trường @vtc.edu.vn";
             } elseif (!in_array($role, ['admin', 'user'])) {
                 $error = "Vai trò không hợp lệ";
             } elseif ($this->userModel->exists($username, $email)) {
                 $error = "Tên đăng nhập hoặc email đã tồn tại";
             } else {
+                // Parse mã sinh viên từ email (ví dụ: quanpn.1140101240014@vtc.edu.vn)
+                $studentCode = $this->parseStudentCodeFromEmail($email);
+
                 // Tạo user mới
                 $data = [
                     'user_name' => $username,
@@ -83,8 +88,17 @@ class AuthController
                     'role' => $role
                 ];
 
-                if ($this->userModel->create($data)) {
+                if ($userId = $this->userModel->createAndReturnId($data)) {
+                    // Nếu parse được mã sinh viên, tự động liên kết với record sinh viên
+                    if ($studentCode) {
+                        require_once __DIR__ . '/../models/StudentModel.php';
+                        $studentModel = new StudentModel();
+                        $studentModel->linkStudentToUser($studentCode, $userId);
+                    }
                     $success = "Đăng ký thành công! Bạn có thể đăng nhập.";
+                    if ($studentCode) {
+                        $success .= " Tài khoản đã được liên kết với mã sinh viên: $studentCode";
+                    }
                 } else {
                     $error = "Đăng ký thất bại, vui lòng thử lại";
                 }
@@ -146,5 +160,24 @@ class AuthController
             header('Location: index.php?message=Bạn không có quyền thực hiện thao tác này&type=error');
             exit();
         }
+    }
+
+    /**
+     * Parse mã sinh viên từ email
+     * Ví dụ: quanpn.1140101240014@vtc.edu.vn -> 1140101240014
+     * @param string $email
+     * @return string|null
+     */
+    private function parseStudentCodeFromEmail($email)
+    {
+        // Lấy phần trước @ 
+        $localPart = explode('@', $email)[0];
+
+        // Tìm chuỗi số dài nhất (thường là mã sinh viên)
+        if (preg_match('/(\d{10,})/', $localPart, $matches)) {
+            return $matches[1];
+        }
+
+        return null;
     }
 }

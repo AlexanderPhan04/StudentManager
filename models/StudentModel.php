@@ -99,4 +99,30 @@ class StudentModel extends Model
             $id
         ]);
     }
+
+    /**
+     * Liên kết sinh viên với user dựa trên student_code
+     * @param string $studentCode
+     * @param int $userId
+     * @return bool
+     */
+    public function linkStudentToUser($studentCode, $userId)
+    {
+        $stmt = $this->db->prepare(
+            "UPDATE {$this->table} SET user_id = ? WHERE student_code = ? AND user_id IS NULL"
+        );
+        return $stmt->execute([$userId, $studentCode]);
+    }
+
+    /**
+     * Tìm sinh viên theo student_code
+     * @param string $studentCode
+     * @return array|false
+     */
+    public function findByStudentCode($studentCode)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE student_code = ?");
+        $stmt->execute([$studentCode]);
+        return $stmt->fetch();
+    }
 }

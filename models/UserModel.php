@@ -65,6 +65,29 @@ class UserModel extends Model
     }
 
     /**
+     * Tạo user mới và trả về ID
+     * @param array $data
+     * @return int|false - ID của user vừa tạo hoặc false nếu thất bại
+     */
+    public function createAndReturnId($data)
+    {
+        $stmt = $this->db->prepare(
+            "INSERT INTO {$this->table} (user_name, email, password, role) VALUES (?, ?, ?, ?)"
+        );
+        $success = $stmt->execute([
+            $data['user_name'],
+            $data['email'],
+            $data['password'],
+            $data['role'] ?? 'user'
+        ]);
+
+        if ($success) {
+            return $this->db->lastInsertId();
+        }
+        return false;
+    }
+
+    /**
      * Xác thực đăng nhập
      * @param string $username
      * @param string $password
